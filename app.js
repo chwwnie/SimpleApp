@@ -19,7 +19,7 @@ let tasks = [];
 
 //Define a route to render the index page
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { tasks });
 });
 
 app.get('/tasks', (req, res) => {
@@ -41,7 +41,7 @@ app.get('/view-tasks', (req, res) => {
 app.get('/view-tasks/:id', (req, res) => {
     const taskId = parseInt(req.params.id);
     const task = tasks.find(t => t.id === taskId);
-    res.render('task', { task });
+    res.render('tasks', { task });
 });
 
 app.post('/view-tasks/:id/edit', (req, res) => {
