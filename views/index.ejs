@@ -68,6 +68,11 @@
                         <br>
                         <p class="text-center text-muted">No pending deadlines! You can relax a little B)</p>
                     <% } else { %>
+                        <% if (task.dueDate < Date.now() && task.dueDate > Date.now() - 3 * 24 * 60 * 60 * 1000) { %>
+                            <p class="text-center text-warning">You have tasks due soon! Please check them out.</p>
+                        <% } else if (task.dueDate < Date.now()) { %> 
+                            <p class="text-center text-danger">You have tasks nearing their deadline! Please check them out.</p>
+                        <% } %> <!-- This checks if there are any tasks that are due within the next 3 days or overdue, and displays a message accordingly -->
                         <% tasks.forEach(task => { %>
                             <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                 <div>
