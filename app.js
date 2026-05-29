@@ -47,6 +47,7 @@ app.get('/view-tasks/:id', (req, res) => {
 app.post('/view-tasks/:id/edit', (req, res) => {
     const taskId = parseInt(req.params.id);
     const { taskName, taskCategory, description } = req.body;
+    const category = taskCategory || 'Uncategorized'; // Default category if none is provided
 
     const taskIndex = tasks.findIndex(t => t.id === taskId);
     if (taskIndex !== -1) {
@@ -66,7 +67,35 @@ app.get('/view-tasks', (req, res) => {
     res.render('viewTasks', { tasks });
 });
 
+app.get('/view-tasks', function(req, res) {
+    const sortBy = req.query.sort || 'recent';
+    let sortedTasks = [...tasks];
 
+    if (sortBy === 'top') {
+        sortedTasks.sort((a, b) => {
+            const aDate = new Date(a.deadline);
+            const bDate = new Date(b.deadline);
+
+            return aDate - bDate; // Sort by deadline (soonest first)
+        });
+    }
+
+    else if (sortBy === 'bottom' ) {
+        sortedTasks.sort((a, b) => {
+            const aDate = new Date(a.deadline);
+            const bDate = new Date(b.deadline);
+
+            return bDate - aDate; // Sort by deadline (furthest first)
+        });
+    }
+
+    else if (sortBy === 'category') {
+        categoryOrder = ['Exam', 'Project', 'Homework', 'Uncategorized']; 
+        sortedTasks.sort((a, b) => {
+            return categoryOrder.indexOf(a.taskCategory) - categoryOrder.indexOf(b.taskCategory);
+        });
+    }
+});
 // ---------------------------------------------------
 
 // Start the server
