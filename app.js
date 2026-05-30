@@ -34,9 +34,6 @@ app.post('/tasks', (req, res) => {
     res.redirect('/view-tasks'); // Redirect to the tasks page after adding a new task
 });
 
-app.get('/view-tasks', (req, res) => {
-    res.render('viewTask', { tasks });
-});
 
 app.get('/tasks/:id/edit', (req, res) => {
     const taskId = parseInt(req.params.id);
@@ -70,11 +67,12 @@ app.post('/tasks/:id/complete', (req, res) => {
     }
 
     tasks = tasks.filter(t => t.id !== taskId); // Remove the task from the list
+    tasks.push({ ...tasks[taskIndex], isCompleted: true }); // Add the completed task back to the list (you can choose to handle this differently if needed)
     res.redirect('/view-tasks'); // Redirect to the tasks page after marking complete
 });
 
 app.get('/view-tasks', (req, res) => {
-    res.render('viewTask', { tasks });
+    res.render('viewTask', { tasks: tasks });
 });
 // ---------------------------------------------------
 
