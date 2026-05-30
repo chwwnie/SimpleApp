@@ -63,7 +63,7 @@
 
                                             <% if (task.taskCategory) { %>
                                                 <span class="badge bg-secondary font-monospace small" style="font-size: 11px;">
-                                                    [<%= task.taskCategory %>]
+                                                    <%= task.taskCategory %>
                                                 </span>
                                             <% } %>
                                         </div>
@@ -79,11 +79,9 @@
                             <div id="collapse-<%= index %>" class="accordion-collapse collapse"
                                 aria-labelledby="heading-<%= index %>" data-bs-parent="#taskAccordion">
                                 
-                                <div class="accordion-body bg-light-subtle border-top py-3 d-flex flex-column align-items-stretch">
+                                <div class="accordion-body bg-light-subtle border-top py-3 d-flex flex-column">
 
-                                    <p class="d-flex align-items-center flex-wrap gap-2 mb-1"> 
-                                        <%= task.description || 'No details provided.' %>
-                                    </p>
+                                    <p class="mb-0" style="margin-top: 16px; font-family: Verdana, sans-serif; font-size:13px; white-space: pre-wrap;"><%= task.description || 'No details provided.' %></p>
 
                                     <div class="d-flex justify-content-between align-items-center pt-2 mt-3">
 
@@ -95,7 +93,7 @@
                                             </a>
 
                                             <form action="/tasks/<%= task.id %>/delete" method="POST" class="m-0"
-                                                onsubmit="return confirm('Delete this tracking entry permanent record?')">
+                                                onsubmit="return confirm('Delete this task?')">
                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
                                                     style="width: 32px; height: 32px;" title="Delete Task">
                                                     🗑️
