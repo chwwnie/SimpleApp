@@ -14,104 +14,119 @@
     <%- include('partials/navbar') %>
 
         <div class="container mt-4">
-            <div class="card p-4 max auto card-float">
-                <h1 class="text-center">Welcome to DeadlineBuddy!</h1>
-            </div>
-            <br>
-            <div class="row justify-content-center mb-4">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <div class="card shadow-sm bg-white">
-                        <div class="card-body py-2 px-3">
-                            <div class="d-flex align-items-center justify-content-around text-center">
+            <% const currentTimestamp = Date.now(); 
+            
+            // Group 1: Filter tasks marked as complete 
+                const completedCount= tasks.filter(t=> t.isCompleted).length;
 
-                                <div class="p-2">
-                                    <span class="badge bg-success d-block small fw-bold text-uppercase"
-                                        style="letter-spacing: 0.5px;">Completed</span>
-                                    <div class="d-inline-flex align-items-center justify-content-center mt-1">
-                                        <span class="stat-dot bg-success me-2"></span>
-                                        <span class="fs-5 fw-bold text-dark">5</span>
+                // Group 2: Filter active tasks that are NOT completed and NOT overdue
+                const inProgressCount = tasks.filter(t => !t.isCompleted && new Date(t.taskdeadline).getTime() >= currentTimestamp).length;
+
+                // Group 3: Filter active tasks whose deadline timestamp is lower than current system clock time
+                const overdueCount = tasks.filter(t => !t.isCompleted && new Date(t.taskdeadline).getTime() < currentTimestamp).length; %>
+
+                    <div class="col-12 col-md-9 mx-auto card p-4 max auto card-float">
+                        <h1 class="text-center fw-bold">Welcome to DeadlineBuddy!</h1>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-12 col-md-8 col-lg-6">
+                            <div class="card shadow-sm bg-white">
+                                <div class="card-body py-2 px-3">
+                                    <div class="d-flex align-items-center justify-content-around text-center">
+
+                                        <div class="p-2">
+                                            <span class="badge bg-success d-block small fw-bold text-uppercase"
+                                                style="letter-spacing: 0.5px;">Completed</span>
+                                            <div class="d-inline-flex align-items-center justify-content-center mt-1">
+                                                <span class="fs-5 fw-bold text-dark">
+                                                    <%= completedCount %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="vr my-2 text-black-50" style="height: 50px;"></div>
+
+                                        <div class="p-2">
+                                            <span class="badge bg-warning d-block small fw-bold text-uppercase"
+                                                style="letter-spacing: 0.5px;">In-Progress</span>
+                                            <div class="d-inline-flex align-items-center justify-content-center mt-1">
+                                                <span class="fs-5 fw-bold text-dark">
+                                                    <%= inProgressCount %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="vr my-2 text-black-50" style="height: 50px;"></div>
+
+                                        <div class="p-2">
+                                            <span class="badge bg-danger d-block small fw-bold text-uppercase"
+                                                style="letter-spacing: 0.5px;">Overdue</span>
+                                            <div class="d-inline-flex align-items-center justify-content-center mt-1">
+                                                <span
+                                                    class="fs-5 fw-bold text-dark">
+                                                    <%= overdueCount %>
+                                                </span>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-
-                                <div class="vr my-2 text-black-50" style="height: 50px;"></div>
-
-                                <div class="p-2">
-                                    <span class="badge bg-warning d-block small fw-bold text-uppercase"
-                                        style="letter-spacing: 0.5px;">In-Progress</span>
-                                    <div class="d-inline-flex align-items-center justify-content-center mt-1">
-                                        <span class="stat-dot bg-warning me-2"></span>
-                                        <span class="fs-5 fw-bold text-dark">3</span>
-                                    </div>
-                                </div>
-
-                                <div class="vr my-2 text-black-50" style="height: 50px;"></div>
-
-                                <div class="p-2">
-                                    <span class="badge bg-danger d-block small fw-bold text-uppercase"
-                                        style="letter-spacing: 0.5px;">Overdue</span>
-                                    <div class="d-inline-flex align-items-center justify-content-center mt-1">
-                                        <span class="stat-dot bg-danger me-2"></span>
-                                        <span class="fs-5 fw-bold text-dark text-danger">1</span>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="card shadow-sm p-4 max auto card-float">
-    <h2 class="text-center fw-bold text-dark">Urgent Deadlines</h2>
-    
-    <% if (tasks.length === 0) { %>
-        <br>
-        <p class="text-center text-muted">No pending deadlines! You can relax a little B)</p>
-    <% } else { %>
-        
-        <% 
-        const now = Date.now();
-        const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-        
-        // Checks if at least one task is overdue or due within 3 days
-        const hasUrgentTasks = tasks.some(t => {
-            const dueDate = new Date(t.taskdeadline).getTime();
-            return dueDate > now && (dueDate - now) <= threeDaysInMs;
-        });
-        
-        const hasOverdueTasks = tasks.some(t => {
-            const dueDate = new Date(t.taskdeadline).getTime();
-            return dueDate < now;
-        });
-        %>
+                    <div class="col-md-8 mx-auto card shadow-sm p-4 max auto card-float">
+                        <h2 class="text-center fw-bold text-dark">Urgent Deadlines</h2>
 
-        <% if (hasOverdueTasks) { %>
-            <div class="alert alert-danger text-center my-2 py-2 small" role="alert">
-                ⚠️ You have tasks past their deadline! Please check them out.
-            </div>
-        <% } else if (hasUrgentTasks) { %>
-            <div class="alert alert-warning text-center my-2 py-2 small" role="alert">
-                ⏰ You have tasks due soon! Please check them out.
-            </div>
-        <% } %>
+                        <% const threeDaysInMs = 3 * 24 * 60 * 60 * 1000; const
+                            urgentTasks=tasks.filter(t=> {
+                            const dueDate = new Date(t.taskdeadline).getTime();
+                            return dueDate < currentTimestamp || (dueDate> currentTimestamp && (dueDate - currentTimestamp) <= threeDaysInMs); }); const
+                                    hasUrgentTasks=urgentTasks.length> 0;
+                                    const hasOverdueTasks = urgentTasks.some(t => new Date(t.taskdeadline).getTime() <
+                                        currentTimestamp); %>
 
-        <div class="list-group mt-3">
-            <% tasks.forEach(task => { %>
-                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <div class="py-1">
-                        <h5 class="mb-1 fw-bold text-dark">
-                            <%= task.taskName %><%= task.taskCategory ? ` (${task.taskCategory})` : '' %>
-                        </h5>
-                        <small class="text-muted d-block mt-1">
-                            Due: <%= new Date(task.taskdeadline).toLocaleDateString() %>
-                        </small>
+                                        <% if (urgentTasks.length===0) { %>
+                                            <br>
+                                            <p class="text-center text-muted">No urgent deadlines right now. You can
+                                                relax a little B)</p>
+                                            <% } else { %>
+
+                                                <% if (hasOverdueTasks) { %>
+                                                    <div class="col-md-8 mx-auto alert alert-danger text-center my-2 py-2 small"
+                                                        role="alert">
+                                                        ⚠️ You have tasks past their deadline! Please check them out. ⚠️
+                                                    </div>
+                                                    <% } else if (hasUrgentTasks) { %>
+                                                        <div class="col-md-8 mx-auto alert alert-warning text-center my-2 py-2 small"
+                                                            role="alert">
+                                                            ⏰ You have tasks due soon! Please check them out. ⏰
+                                                        </div>
+                                                        <% } %>
+
+                                                            <div class="list-group mt-3">
+                                                                <% urgentTasks.forEach(task=> { %>
+                                                                    <a
+                                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                                        <div class="py-1">
+                                                                            <h5 class="mb-1 fw-bold text-dark">
+                                                                                <%= task.taskName %>
+                                                                                    <%= task.taskCategory ?
+                                                                                        `(${task.taskCategory})` : '' %>
+                                                                            </h5>
+                                                                            <small class="text-muted d-block mt-1">
+                                                                                Due: <%= new
+                                                                                    Date(task.taskdeadline).toLocaleDateString()
+                                                                                    %>
+                                                                            </small>
+                                                                        </div>
+                                                                    </a>
+                                                                    <% }); %>
+                                                            </div>
+
+                                                            <% } %>
                     </div>
-                </a>
-            <% }); %>
-        </div>
-
-    <% } %>
-</div>
 
         </div>
 
